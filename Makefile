@@ -1,4 +1,4 @@
-CFLAGS+=-g -std=c99 -Wall -Wextra -I/usr/local/include #-DDEBUG #-DDMALLOC
+CFLAGS+=-g -std=c99 -pedantic -Wall -Wextra -I/usr/local/include
 LDFLAGS+=-L/usr/local/lib -lxcb -lxcb-util
 
 dwmstatus: dwmstatus.c
