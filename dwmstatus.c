@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <sys/soundcard.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include <sys/time.h>
@@ -20,6 +22,8 @@ int main(void) {
     xcb_screen_t *screen;
     char status[80];
     int scrno;
+    char defaultmixer[] = "/dev/mixer";
+    int mixfd, vol = 0;
 
     conn = xcb_connect(NULL, &scrno);
     if (!conn)
@@ -30,10 +34,18 @@ int main(void) {
 
     screen = xcb_aux_get_screen(conn, scrno);
 
-    len = 4;
+    if ((mixfd = open(defaultmixer, O_RDWR)) < 0) {
+        perror("open mixer");
+        exit(1);
+    }
 
+    len = 4;
     while (1)
     {
+        if (ioctl(mixfd, MIXER_READ(0), &vol) == -1) {
+            printf("OSS: Cannot read mixer information\n");
+        }
+
         err = sysctlbyname("hw.acpi.battery.life", &bat, &len, NULL, 0);
         if (err != 0)
         {
@@ -72,7 +84,7 @@ int main(void) {
         timeinfo = localtime(&rawtime);
         char timestr[17];
         strftime((char *)timestr, 17, "%F %R", timeinfo);
-        snprintf(status, 80, "%s%d%% | %dC | %s", batstring, bat, temp, timestr);
+        snprintf(status, 80, "%s%d%% | %dC | V%d%% | %s", batstring, bat, temp, vol & 0x7f, timestr);
 
         xcb_change_property(conn, XCB_PROP_MODE_REPLACE, screen->root, XCB_ATOM_WM_NAME,
                             XCB_ATOM_STRING, 8, strlen(status), status);
