@@ -42,7 +42,7 @@ int main(void) {
     len = 4;
     while (1)
     {
-        if (ioctl(mixfd, MIXER_READ(0), &vol) == -1) {
+        if (ioctl(mixfd, SOUND_MIXER_READ_VOLUME, &vol) == -1) {
             printf("OSS: Cannot read mixer information\n");
         }
 
