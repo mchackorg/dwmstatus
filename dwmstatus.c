@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <xcb/xcb.h>
 #include <xcb/xcb_icccm.h>
+#include <xcb/xcb_aux.h>
 #include <string.h>
 
 int main(void) {
@@ -19,7 +20,6 @@ int main(void) {
     xcb_screen_t *screen;
     char status[80];
     int scrno;
-    xcb_screen_iterator_t iter;
 
     conn = xcb_connect(NULL, &scrno);
     if (!conn)
@@ -28,14 +28,7 @@ int main(void) {
         exit(1);
     }
 
-    iter = xcb_setup_roots_iterator(xcb_get_setup(conn));
-
-    for (int i = 0; i < scrno; ++i)
-    {
-        xcb_screen_next(&iter);
-    }
-
-    screen = iter.data;
+    screen = xcb_aux_get_screen(conn, scrno);
 
     len = 4;
 
