@@ -60,11 +60,14 @@ int main(void) {
 
         switch (batstate)
         {
+        case 0:
+            batstring = "=";
+            break;
         case 1:
-            batstring = "B";
+            batstring = "-";
             break;
         case 2:
-            batstring = "AC";
+            batstring = "+";
             break;
         default:
             batstring = "U";
@@ -84,7 +87,7 @@ int main(void) {
         timeinfo = localtime(&rawtime);
         char timestr[17];
         strftime((char *)timestr, 17, "%F %R", timeinfo);
-        snprintf(status, 80, "%s%d%% | %dC | V%d%% | %s", batstring, bat, temp, vol & 0x7f, timestr);
+        snprintf(status, 80, "Bat %s%d%% | %d°C | Vol %d%% | %s", batstring, bat, temp, vol & 0x7f, timestr);
 
         xcb_change_property(conn, XCB_PROP_MODE_REPLACE, screen->root, XCB_ATOM_WM_NAME,
                             XCB_ATOM_STRING, 8, strlen(status), status);
