@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <signal.h>
 #include <sys/soundcard.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -10,6 +11,13 @@
 #include <xcb/xcb_icccm.h>
 #include <xcb/xcb_aux.h>
 #include <string.h>
+
+int sigcode;
+
+void sigcatch(int sig)
+{
+    sigcode = sig;
+}
 
 int main(void) {
     int bat;
@@ -36,6 +44,12 @@ int main(void) {
 
     if ((mixfd = open(defaultmixer, O_RDWR)) < 0) {
         perror("open mixer");
+        exit(1);
+    }
+
+    if (SIG_ERR == signal(SIGHUP, sigcatch))
+    {
+        perror("signal");
         exit(1);
     }
 
@@ -79,6 +93,7 @@ int main(void) {
             perror("sysctl");
         }
 
+        // Temperature is measured in deciKelvins.
         temp = (temp - 2732) / 10;
 
         time_t rawtime;
@@ -94,6 +109,7 @@ int main(void) {
 
         xcb_flush(conn);
 
+        // Interrupted if we're sent a SIGHUP
         sleep(10);
     }
 }
