@@ -93,7 +93,8 @@ int main(void) {
             perror("sysctl");
         }
 
-        // Temperature is measured in deciKelvins.
+        // Temperature is measured in deciKelvins, so convert it to
+        // degrees Celsius.
         temp = (temp - 2732) / 10;
 
         time_t rawtime;
