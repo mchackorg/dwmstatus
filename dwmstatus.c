@@ -51,6 +51,9 @@ int main(void) {
     int scrno;
     char defaultmixer[] = "/dev/mixer";
     int mixfd, vol = 0;
+    time_t rawtime;
+    struct tm *timeinfo;
+    char timestr[17];
 
     conn = xcb_connect(NULL, &scrno);
     if (!conn)
@@ -116,12 +119,10 @@ int main(void) {
         // degrees Celsius.
         temp = (temp - 2732) / 10;
 
-        time_t rawtime;
-        struct tm *timeinfo;
         time(&rawtime);
         timeinfo = localtime(&rawtime);
-        char timestr[17];
         strftime(timestr, 17, "%F %R", timeinfo);
+
         snprintf(status, 80, "Bat %s%d%% | %d°C | Vol %d%% | %s", batstring, bat, temp, vol & 0x7f, timestr);
 
         xcb_change_property(conn, XCB_PROP_MODE_REPLACE, screen->root, XCB_ATOM_WM_NAME,
