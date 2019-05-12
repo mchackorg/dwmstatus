@@ -121,7 +121,7 @@ int main(void) {
         time(&rawtime);
         timeinfo = localtime(&rawtime);
         char timestr[17];
-        strftime((char *)timestr, 17, "%F %R", timeinfo);
+        strftime(timestr, 17, "%F %R", timeinfo);
         snprintf(status, 80, "Bat %s%d%% | %d°C | Vol %d%% | %s", batstring, bat, temp, vol & 0x7f, timestr);
 
         xcb_change_property(conn, XCB_PROP_MODE_REPLACE, screen->root, XCB_ATOM_WM_NAME,
