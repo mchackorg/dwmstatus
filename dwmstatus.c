@@ -38,7 +38,8 @@ void sigcatch(int sig)
     sigcode = sig;
 }
 
-int main(void) {
+int main(void)
+{
     int bat;
     int batstate;
     int err;
